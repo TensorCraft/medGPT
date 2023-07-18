@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Demo</title>
+  <script type="text/javascript">
+    var websocket;
+
+    function initWebSocket() {
+      var wsUrl = "ws://127.0.0.1:8000";
+      websocket = new WebSocket(wsUrl);
+
+      websocket.onopen = function() {
+        console.log("WebSocket connection established.");
+      };
+
+      websocket.onmessage = function(event) {
+        var message = event.data;
+        var output = document.getElementById("output");
+        output.value += message + "\n";
+
+        if (message === "<EOA>") {
+          websocket.close();
+        }
+      };
+
+      websocket.onclose = function() {
+        console.log("WebSocket connection closed.");
+      };
+    }
+
+    function sendMessage() {
+      var input = document.getElementById("input");
+      var message = input.value;
+      input.value = "";
+
+      if (websocket.readyState === WebSocket.OPEN) {
+        websocket.send(message);
+      }
+    }
+  </script>
+</head>
+<body>
+  <textarea id="output" rows="10" cols="50" readonly></textarea><br>
+  <input type="text" id="input"><button onclick="sendMessage()">Send</button>
+
+  <script type="text/javascript">
+    initWebSocket();
+  </script>
+</body>
+</html>
